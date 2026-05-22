@@ -1,0 +1,107 @@
+/* Hallmark · tokens · TWS South Florida
+ * theme: custom · paper white #ffffff · accent ember #C02F0A · ink navy #07154D
+ * source-of-truth: this file. Page CSS imports + references by name only.
+ */
+
+:root {
+  /* ─── Paper · Surfaces ─────────────────────────────────────── */
+  --color-paper-0: oklch(100% 0 0);           /* #ffffff — brand white */
+  --color-paper-1: oklch(98.5% 0.003 265);    /* faint cool wash */
+  --color-paper-2: oklch(96% 0.01 265);       /* alt section band */
+  --color-paper-3: oklch(93% 0.015 265);      /* input fills, soft cards */
+
+  /* ─── Ink · Text + dark surfaces ───────────────────────────── */
+  --color-ink-0: oklch(19% 0.12 265);         /* #07154D — brand navy, headings */
+  --color-ink-1: oklch(15% 0.11 265);         /* darker navy — utility bar */
+  --color-ink-2: oklch(30% 0.06 265);         /* body text on light */
+  --color-ink-3: oklch(48% 0.03 265);         /* secondary text */
+  --color-ink-4: oklch(62% 0.015 265);        /* tertiary, captions */
+
+  --color-rule: oklch(88% 0.012 265);         /* hairline rules */
+  --color-rule-strong: oklch(80% 0.018 265);  /* visible dividers */
+
+  /* ─── Accent · CTA + spike ─────────────────────────────────── */
+  --color-accent: oklch(50% 0.18 35);         /* #C02F0A — deep ember CTA */
+  --color-accent-hover: oklch(45% 0.18 33);   /* press / hover */
+  --color-accent-soft: oklch(96% 0.025 35);   /* tint wash, focus ring halo */
+  --color-accent-ink: oklch(100% 0 0);        /* white text on ember */
+
+  /* ─── Inverted (dark bands: hero scrim, video, footer) ──────── */
+  --color-paper-dark: oklch(19% 0.12 265);    /* match brand navy */
+  --color-paper-dark-2: oklch(15% 0.11 265);  /* deeper navy for footer base */
+  --color-ink-on-dark: oklch(100% 0 0);       /* brand white */
+  --color-ink-on-dark-soft: oklch(78% 0.02 265);
+  --color-rule-on-dark: oklch(30% 0.08 265);
+
+  /* ─── Photo placeholder gradients (swap for real <img> assets) ─── */
+  --color-photo-from: oklch(82% 0.025 250);
+  --color-photo-to: oklch(72% 0.045 260);
+  --color-dark-glow: oklch(32% 0.13 265);
+
+  /* ─── Glass · frosted hero form panel ─────────────────────── */
+  --color-glass: oklch(100% 0 0 / 0.72);
+  --color-glass-border: oklch(19% 0.12 265 / 0.14);
+  --shadow-glass: 0 12px 40px oklch(19% 0.12 265 / 0.08),
+                  0 2px 6px oklch(19% 0.12 265 / 0.04);
+  --color-blueprint: oklch(19% 0.12 265 / 0.55);
+  --color-blueprint-grid: oklch(19% 0.12 265 / 0.10);
+
+  /* ─── Focus + status ───────────────────────────────────────── */
+  --color-focus: oklch(70% 0.16 240);        /* distinct from accent for a11y */
+  --color-success: oklch(60% 0.14 145);
+  --color-error: oklch(55% 0.22 25);
+
+  /* ─── Typography ───────────────────────────────────────────── */
+  --font-display: var(--font-geist-sans), system-ui, sans-serif;
+  --font-body: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Type scale — modular, 1.25 ratio at large end */
+  --text-xs: 0.75rem;     /* 12 — mono micro-labels */
+  --text-sm: 0.875rem;    /* 14 */
+  --text-base: 1rem;      /* 16 — body */
+  --text-md: 1.0625rem;   /* 17 — slightly larger body for prose */
+  --text-lg: 1.25rem;     /* 20 */
+  --text-xl: 1.5rem;      /* 24 */
+  --text-2xl: 1.875rem;   /* 30 */
+  --text-3xl: 2.5rem;     /* 40 */
+  --text-display-s: 3.25rem;  /* 52 */
+  --text-display: 4.25rem;    /* 68 */
+  --text-display-l: 5.5rem;   /* 88 */
+
+  /* ─── Spacing · 4-pt scale ─────────────────────────────────── */
+  --space-1: 0.25rem;   /* 4 */
+  --space-2: 0.5rem;    /* 8 */
+  --space-3: 0.75rem;   /* 12 */
+  --space-4: 1rem;      /* 16 */
+  --space-5: 1.25rem;   /* 20 */
+  --space-6: 1.5rem;    /* 24 */
+  --space-8: 2rem;      /* 32 */
+  --space-10: 2.5rem;   /* 40 */
+  --space-12: 3rem;     /* 48 */
+  --space-16: 4rem;     /* 64 */
+  --space-20: 5rem;     /* 80 */
+  --space-24: 6rem;     /* 96 */
+  --space-32: 8rem;     /* 128 */
+  --space-40: 10rem;    /* 160 */
+
+  /* ─── Radii · 2–3px (sharp, slightly modern) ─── */
+  --radius-xs: 2px;     /* buttons — sharpest */
+  --radius-sm: 3px;     /* inputs, cards, form panels */
+  --radius-md: 3px;     /* image frames */
+  --radius-lg: 3px;     /* large surfaces */
+
+  /* ─── Motion ───────────────────────────────────────────────── */
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 360ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ─── Container ────────────────────────────────────────────── */
+  --container-narrow: 64rem;   /* 1024 — prose / single-column */
+  --container: 76rem;          /* 1216 — default */
+  --container-wide: 88rem;     /* 1408 — gallery / wide bands */
+  --container-px: var(--space-6);
+}

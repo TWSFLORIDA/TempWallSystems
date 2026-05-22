@@ -1,0 +1,264 @@
+/* Hallmark · macrostructure: Split Hero with form-in-fold · tone: utilitarian-technical-trust
+ * theme: custom (paper light · accent warm-orange · ink deep-navy)
+ * paper: oklch(100% 0 0) · accent: oklch(60% 0.17 35) · ink: oklch(22% 0.12 280)
+ * display: Geist heavy · body: Geist · label: Geist Mono
+ * axes: light / geometric-sans / warm-orange
+ * studied: yes · DNA-source: url (tempwallsystems.com + twssocal.com) + screenshots
+ * pre-emit critique: P5 H5 E4 S5 R5 V4
+ */
+
+@import "tailwindcss";
+@import "../tokens.css";
+
+@theme inline {
+  --color-paper-0: var(--color-paper-0);
+  --color-paper-1: var(--color-paper-1);
+  --color-paper-2: var(--color-paper-2);
+  --color-paper-3: var(--color-paper-3);
+  --color-ink-0: var(--color-ink-0);
+  --color-ink-1: var(--color-ink-1);
+  --color-ink-2: var(--color-ink-2);
+  --color-ink-3: var(--color-ink-3);
+  --color-ink-4: var(--color-ink-4);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-accent-ink: var(--color-accent-ink);
+  --color-paper-dark: var(--color-paper-dark);
+  --color-paper-dark-2: var(--color-paper-dark-2);
+  --color-ink-on-dark: var(--color-ink-on-dark);
+  --color-ink-on-dark-soft: var(--color-ink-on-dark-soft);
+  --color-rule: var(--color-rule);
+  --color-rule-strong: var(--color-rule-strong);
+  --color-rule-on-dark: var(--color-rule-on-dark);
+  --color-focus: var(--color-focus);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+html,
+body {
+  overflow-x: clip;
+  background: var(--color-paper-0);
+  color: var(--color-ink-2);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+/* Hairlines */
+hr {
+  border: 0;
+  border-top: 1px solid var(--color-rule);
+  margin: var(--space-12) 0;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+/* Focus discipline — instant, never animated */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Headings */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--color-ink-0);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+h1 { font-weight: 700; }
+h2, h3, h4 { font-weight: 600; }
+
+p { max-width: 60ch; }
+
+/* Display heading wrap discipline (Hallmark gate 63) */
+.display-head {
+  overflow-wrap: anywhere;
+  min-width: 0;
+  hyphens: auto;
+}
+
+/* ─── Hallmark utility classes ─────────────────────────────── */
+
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  font-weight: 500;
+}
+
+.label-mono-accent {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+/* Buttons — 2px radii per design preference */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+.btn-primary:hover { background: var(--color-accent-hover); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-ink-0);
+  border-color: var(--color-rule-strong);
+}
+.btn-ghost:hover {
+  background: var(--color-paper-2);
+  border-color: var(--color-ink-0);
+}
+
+.btn-ghost-dark {
+  background: transparent;
+  color: var(--color-ink-on-dark);
+  border-color: var(--color-rule-on-dark);
+}
+.btn-ghost-dark:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--color-ink-on-dark);
+}
+
+/* Inputs */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-rule-strong);
+  background: var(--color-paper-0);
+  color: var(--color-ink-1);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.4;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+}
+.input::placeholder,
+.textarea::placeholder { color: var(--color-ink-4); }
+.input:hover,
+.textarea:hover,
+.select:hover { border-color: var(--color-ink-3); }
+.input:focus-visible,
+.textarea:focus-visible,
+.select:focus-visible {
+  outline: none;
+  border-color: var(--color-ink-0);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+.textarea { min-height: 7rem; resize: vertical; }
+
+/* Container helpers */
+.container-narrow,
+.container,
+.container-wide {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--container-px);
+}
+.container-narrow { max-width: var(--container-narrow); }
+.container { max-width: var(--container); }
+.container-wide { max-width: var(--container-wide); }
+
+/* Section rhythm */
+.section {
+  padding-block: var(--space-24);
+}
+.section-tight {
+  padding-block: var(--space-16);
+}
+@media (max-width: 768px) {
+  .section { padding-block: var(--space-16); }
+  .section-tight { padding-block: var(--space-12); }
+}
+
+/* Dark bands */
+.band-dark {
+  background: var(--color-paper-dark);
+  color: var(--color-ink-on-dark);
+}
+.band-dark h1,
+.band-dark h2,
+.band-dark h3,
+.band-dark h4 { color: var(--color-ink-on-dark); }
+.band-dark p { color: var(--color-ink-on-dark-soft); }
+
+/* Hairline divider used inside sections */
+.rule { border-top: 1px solid var(--color-rule); }
+.rule-strong { border-top: 1px solid var(--color-rule-strong); }
+.rule-on-dark { border-top: 1px solid var(--color-rule-on-dark); }
+
+/* Reveal animation — single primitive, opacity + transform only */
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur-slow) var(--ease-out),
+              transform var(--dur-slow) var(--ease-out);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.is-in {
+    transition: opacity 150ms linear;
+    transform: none;
+  }
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 150ms !important;
+  }
+}
