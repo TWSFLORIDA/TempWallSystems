@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useSubmitLead } from "@/app/useLeads";
 
 /**
  * Exit-intent lead-magnet modal — split-screen design.
@@ -14,14 +15,20 @@ import { useEffect, useRef, useState } from "react";
 
 type Step = "pitch" | "form" | "success";
 
+// Paused while actively building/testing — fires on every mouseleave in
+// dev, which gets old fast. Flip back to true to re-enable.
+const EXIT_INTENT_ENABLED = false;
+
 export function ExitIntentModal() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>("pitch");
   const [submitting, setSubmitting] = useState(false);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const submitLead = useSubmitLead();
 
   // ── Exit-intent detection (DEV: fires every time after 2s) ─────
   useEffect(() => {
+    if (!EXIT_INTENT_ENABLED) return;
     if (typeof window === "undefined") return;
     const pageLoadAt = Date.now();
     const MIN_TIME_ON_PAGE = 2000;
@@ -69,7 +76,20 @@ export function ExitIntentModal() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 700));
+    const fd = new FormData(e.currentTarget);
+    try {
+      await submitLead({
+        name: String(fd.get("name") ?? ""),
+        email: String(fd.get("email") ?? ""),
+        phone: String(fd.get("phone") ?? ""),
+        message: "Downloaded brochure via exit-intent",
+        source: "exit_intent",
+      });
+    } catch (err) {
+      // Don't block the brochure download on a backend hiccup — this is a
+      // lead magnet. Log and continue; the visitor still gets their PDF.
+      console.error("Exit-intent lead submit failed", err);
+    }
     setStep("success");
     setSubmitting(false);
     const link = document.createElement("a");
@@ -112,7 +132,7 @@ export function ExitIntentModal() {
             <div className="exit-book-pane">
               <Image
                 src="/tws-book.png?v=3"
-                alt="TWS South Florida brochure"
+                alt="TWS Southeast Florida brochure"
                 width={1122}
                 height={1402}
                 sizes="(max-width: 768px) 60vw, 24rem"
@@ -129,7 +149,7 @@ export function ExitIntentModal() {
 
             {/* RIGHT — content stack */}
             <div className="exit-content-pane">
-              <p className="exit-brand">TWS · SOUTH FLORIDA</p>
+              <p className="exit-brand">TWS · SOUTHEAST FLORIDA</p>
 
               <p className="exit-eyebrow">BEFORE YOU GO</p>
 
@@ -194,7 +214,7 @@ export function ExitIntentModal() {
             <div className="exit-book-pane">
               <Image
                 src="/tws-book.png?v=3"
-                alt="TWS South Florida brochure"
+                alt="TWS Southeast Florida brochure"
                 width={1122}
                 height={1402}
                 sizes="(max-width: 768px) 60vw, 24rem"
@@ -209,7 +229,7 @@ export function ExitIntentModal() {
               />
             </div>
             <div className="exit-content-pane">
-              <p className="exit-brand">TWS · SOUTH FLORIDA</p>
+              <p className="exit-brand">TWS · SOUTHEAST FLORIDA</p>
               <p className="exit-eyebrow">STEP 2 OF 2</p>
               <h2 id="exit-title" className="exit-headline-sm">
                 Where should we send it?
@@ -248,7 +268,7 @@ export function ExitIntentModal() {
             <div className="exit-book-pane">
               <Image
                 src="/tws-book.png?v=3"
-                alt="TWS South Florida brochure"
+                alt="TWS Southeast Florida brochure"
                 width={1122}
                 height={1402}
                 sizes="(max-width: 768px) 60vw, 24rem"
@@ -263,7 +283,7 @@ export function ExitIntentModal() {
               />
             </div>
             <div className="exit-content-pane">
-              <p className="exit-brand">TWS · SOUTH FLORIDA</p>
+              <p className="exit-brand">TWS · SOUTHEAST FLORIDA</p>
               <p className="exit-eyebrow">SENT</p>
               <h2 id="exit-title" className="exit-headline">
                 Your download is starting.
@@ -277,7 +297,7 @@ export function ExitIntentModal() {
                 >
                   click here
                 </a>
-                . We&apos;ll follow up the same day.
+                . We&apos;ll follow up shortly.
               </p>
               <button
                 type="button"

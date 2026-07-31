@@ -60,7 +60,7 @@ export function Brochure() {
             <div className="br-book">
               <Image
                 src="/tws-book.png?v=3"
-                alt="TWS South Florida brochure — 3D hardcover mockup"
+                alt="TWS Southeast Florida brochure — 3D hardcover mockup"
                 width={1122}
                 height={1402}
                 priority={false}
@@ -165,7 +165,7 @@ export function Brochure() {
                     letterSpacing: "0.04em",
                   }}
                 >
-                  No spam · Instant download · Same-day follow-up
+                  No spam · Instant download
                 </p>
               </form>
             )}

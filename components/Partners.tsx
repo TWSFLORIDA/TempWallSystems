@@ -42,14 +42,13 @@ export function Partners() {
                 color: "var(--color-ink-0)",
               }}
             >
-              The general contractors building South Florida.
+              The general contractors building Southeast Florida.
             </h3>
           </div>
 
           <ul
             style={{
               listStyle: "none",
-              padding: 0,
               margin: 0,
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",

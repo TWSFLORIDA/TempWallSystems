@@ -1,15 +1,5 @@
 import Image from "next/image";
-
-type IndustryKey =
-  | "airport"
-  | "healthcare"
-  | "events"
-  | "lab"
-  | "office"
-  | "retail"
-  | "school"
-  | "telecom"
-  | "government";
+import type { IndustryKey } from "@/lib/serviceAreas";
 
 type GalleryItem = {
   key: IndustryKey;
@@ -75,7 +65,18 @@ const ITEMS: GalleryItem[] = [
   },
 ];
 
-export function Gallery() {
+function rank(key: IndustryKey, emphasis: IndustryKey[]): number {
+  const i = emphasis.indexOf(key);
+  return i === -1 ? emphasis.length : i;
+}
+
+export function Gallery({
+  emphasisIndustries,
+}: { emphasisIndustries?: IndustryKey[] } = {}) {
+  const items = emphasisIndustries?.length
+    ? [...ITEMS].sort((a, b) => rank(a.key, emphasisIndustries) - rank(b.key, emphasisIndustries))
+    : ITEMS;
+
   return (
     <section
       id="gallery"
@@ -121,7 +122,7 @@ export function Gallery() {
 
         {/* Uniform 3 × 3 grid — every cell same width AND height */}
         <ul className="gallery-grid">
-          {ITEMS.map((item) => (
+          {items.map((item) => (
             <li key={item.key} className="gallery-cell">
               <div className="gallery-img">
                 <Image

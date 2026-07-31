@@ -93,6 +93,7 @@ export function VideoBand() {
             <video
               ref={videoRef}
               src="/tws-install.mp4"
+              poster="/tws-install-poster.jpg"
               controls={playing}
               playsInline
               preload="metadata"
@@ -127,7 +128,7 @@ export function VideoBand() {
               {/* Top eyebrow + duration tag */}
               <div className="vb-poster-top">
                 <span className="vb-poster-eyebrow">TWS · INSTALL REEL</span>
-                <span className="vb-poster-duration">1:24</span>
+                <span className="vb-poster-duration">2:44</span>
               </div>
 
               {/* Center: logo + play */}
@@ -159,7 +160,7 @@ export function VideoBand() {
 
               {/* Bottom caption */}
               <div className="vb-poster-bottom">
-                <span>SEE THE INSTALL · LIVE CORRIDOR · UNDER 4 HRS</span>
+                <span>SEE THE INSTALL · LIVE CORRIDOR · SEALED &amp; QUIET</span>
               </div>
             </button>
           </div>

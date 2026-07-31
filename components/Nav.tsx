@@ -1,85 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { SERVICE_AREAS } from "@/lib/serviceAreas";
+import { SERVICE_LIST } from "@/lib/services";
 
 const PHONE_DISPLAY = "(561) 777-4958";
 const PHONE_TEL = "+15617774958";
-
-type Region = { name: string; cities: string[] };
-
-const SERVICE_AREAS: Region[] = [
-  {
-    name: "Treasure Coast",
-    cities: [
-      "Vero Beach",
-      "Sebastian",
-      "Fort Pierce",
-      "Port St. Lucie",
-      "Stuart",
-      "Jensen Beach",
-      "Palm City",
-      "Hobe Sound",
-      "Jupiter",
-    ],
-  },
-  {
-    name: "Palm Beach County",
-    cities: [
-      "Palm Beach",
-      "West Palm Beach",
-      "Wellington",
-      "Royal Palm Beach",
-      "Lake Worth",
-      "Boynton Beach",
-      "Delray Beach",
-      "Boca Raton",
-    ],
-  },
-  {
-    name: "Broward County",
-    cities: [
-      "Fort Lauderdale",
-      "Hollywood",
-      "Pembroke Pines",
-      "Coral Springs",
-      "Pompano Beach",
-      "Davie",
-      "Plantation",
-      "Sunrise",
-      "Weston",
-      "Miramar",
-    ],
-  },
-  {
-    name: "Miami-Dade",
-    cities: [
-      "Miami",
-      "Miami Beach",
-      "Coral Gables",
-      "Coconut Grove",
-      "Doral",
-      "Hialeah",
-      "Aventura",
-      "Kendall",
-      "Homestead",
-      "Cutler Bay",
-    ],
-  },
-  {
-    name: "Florida Keys",
-    cities: [
-      "Key Largo",
-      "Tavernier",
-      "Islamorada",
-      "Marathon",
-      "Big Pine Key",
-      "Key West",
-    ],
-  },
-];
-
-const TOTAL_CITIES = SERVICE_AREAS.reduce((a, r) => a + r.cities.length, 0);
 
 function PhoneIcon() {
   return (
@@ -98,8 +26,11 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [areaOpen, setAreaOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const areaRef = useRef<HTMLUListElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<HTMLLIElement>(null);
+  const servicesPanelRef = useRef<HTMLDivElement>(null);
 
   // Reset region selection when the menu closes
   useEffect(() => {
@@ -138,6 +69,28 @@ export function Nav() {
     };
   }, [areaOpen]);
 
+  // ESC + outside-click closes Services dropdown
+  useEffect(() => {
+    if (!servicesOpen) return;
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") setServicesOpen(false);
+    }
+    function handleClick(e: MouseEvent) {
+      const target = e.target as Node;
+      const inTrigger = servicesRef.current?.contains(target) ?? false;
+      const inPanel = servicesPanelRef.current?.contains(target) ?? false;
+      if (!inTrigger && !inPanel) {
+        setServicesOpen(false);
+      }
+    }
+    document.addEventListener("keydown", handleEsc);
+    document.addEventListener("mousedown", handleClick);
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [servicesOpen]);
+
   return (
     <div
       style={{
@@ -172,7 +125,7 @@ export function Nav() {
             aria-label="Service area"
             style={{ justifySelf: "start", textTransform: "uppercase" }}
           >
-            South Florida · Treasure Coast → Florida Keys
+            Southeast Florida · Treasure Coast → Miami
           </span>
           <span />
           <a
@@ -208,7 +161,7 @@ export function Nav() {
         >
           <a
             href="#top"
-            aria-label="TWS South Florida — home"
+            aria-label="TWS Southeast Florida — home"
             style={{
               display: "flex",
               alignItems: "center",
@@ -233,6 +186,34 @@ export function Nav() {
             </li>
             <li>
               <a href="#gallery">Projects</a>
+            </li>
+            <li ref={servicesRef}>
+              <button
+                type="button"
+                onClick={() => setServicesOpen((v) => !v)}
+                aria-expanded={servicesOpen}
+                className="nav-area-btn"
+              >
+                Services
+                <svg
+                  width="10"
+                  height="6"
+                  viewBox="0 0 10 6"
+                  fill="none"
+                  aria-hidden
+                  style={{
+                    transform: servicesOpen ? "rotate(180deg)" : "rotate(0)",
+                    transition: "transform var(--dur-fast) var(--ease-out)",
+                  }}
+                >
+                  <path
+                    d="M1 1L5 5L9 1"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="square"
+                  />
+                </svg>
+              </button>
             </li>
             <li>
               <button
@@ -296,6 +277,87 @@ export function Nav() {
           </button>
         </nav>
 
+        {/* Services mega menu — same chrome as the Service Area mega menu,
+            just a flat 3-card grid since there's no two-step flow needed. */}
+        {servicesOpen && (
+          <div className="area-mega" ref={servicesPanelRef}>
+            <div className="container-wide area-mega-inner">
+              <div className="area-mega-header">
+                <p className="area-mega-eyebrow">SERVICES</p>
+                <h3 className="area-mega-title">
+                  What we build, wherever you need it.
+                </h3>
+              </div>
+              <ul className="area-region-grid services-mega-grid">
+                {SERVICE_LIST.map((service) => (
+                  <li key={service.slug}>
+                    <Link
+                      href={`/services/${service.slug}`}
+                      onClick={() => setServicesOpen(false)}
+                      className="area-region-card"
+                    >
+                      <span className="area-region-name">{service.name}</span>
+                      <span className="area-service-tagline">{service.tagline}</span>
+                      <span className="area-region-arrow" aria-hidden>
+                        →
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Bottom CTA — phone + Request a Proposal */}
+              <div className="area-mega-footer">
+                <div className="area-mega-footer-copy">
+                  <p className="area-mega-footer-label">
+                    Not sure which one you need?
+                  </p>
+                  <p className="area-mega-footer-text">
+                    It&apos;s the same sealed containment system either way —
+                    reach out and we&apos;ll confirm scope.
+                  </p>
+                </div>
+                <div className="area-mega-footer-actions">
+                  <a
+                    href={`tel:${PHONE_TEL}`}
+                    onClick={() => setServicesOpen(false)}
+                    className="area-mega-phone"
+                  >
+                    <PhoneIcon />
+                    {PHONE_DISPLAY}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setServicesOpen(false);
+                      window.dispatchEvent(
+                        new CustomEvent("open-quote-flow")
+                      );
+                    }}
+                    className="area-mega-cta"
+                  >
+                    Request a Proposal
+                    <svg
+                      width="14"
+                      height="10"
+                      viewBox="0 0 14 10"
+                      fill="none"
+                      aria-hidden
+                    >
+                      <path
+                        d="M9 1L13 5L9 9M13 5H1"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="square"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Service Area mega menu — two-step picker (county → city) */}
         {areaOpen && (
           <div className="area-mega" ref={panelRef}>
@@ -352,17 +414,17 @@ export function Nav() {
                   <ul className="area-city-grid">
                     {SERVICE_AREAS.find((r) => r.name === selectedRegion)?.cities.map(
                       (city) => (
-                        <li key={city}>
-                          <a
-                            href="#contact"
+                        <li key={city.slug}>
+                          <Link
+                            href={`/locations/${city.slug}`}
                             onClick={() => setAreaOpen(false)}
                             className="area-city-card"
                           >
-                            <span>{city}</span>
+                            <span>{city.name}</span>
                             <span className="area-city-arrow" aria-hidden>
                               →
                             </span>
-                          </a>
+                          </Link>
                         </li>
                       )
                     )}
@@ -377,7 +439,7 @@ export function Nav() {
                     Don&apos;t see your city?
                   </p>
                   <p className="area-mega-footer-text">
-                    We serve the entire Treasure Coast → Florida Keys corridor.
+                    We serve the entire Treasure Coast → Miami corridor.
                     Reach out and we&apos;ll confirm coverage.
                   </p>
                 </div>
@@ -529,8 +591,31 @@ export function Nav() {
             padding: 0;
             margin: 0;
             display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: var(--space-4);
+          }
+          /* Services mega menu reuses .area-region-grid/.area-region-card for
+             identical chrome, just 3 columns instead of 5 (3 services). */
+          .services-mega-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          }
+          @media (max-width: 900px) {
+            .services-mega-grid {
+              grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+          }
+          @media (max-width: 640px) {
+            .services-mega-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+          :global(.area-service-tagline) {
+            display: block;
+            margin-top: var(--space-2);
+            font-family: var(--font-body);
+            font-size: var(--text-sm);
+            line-height: 1.4;
+            color: var(--color-ink-3);
           }
           :global(.area-region-card) {
             display: flex;
@@ -539,7 +624,9 @@ export function Nav() {
             justify-content: space-between;
             gap: var(--space-6);
             width: 100%;
+            height: 100%;
             min-height: 11rem;
+            box-sizing: border-box;
             padding: var(--space-5);
             background: var(--color-paper-0);
             border: 1px solid var(--color-rule-strong);

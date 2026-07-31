@@ -1,6 +1,13 @@
 import { LeadForm } from "./LeadForm";
+import type { CityPageData } from "@/lib/locationContent";
 
-export function CTABand() {
+export function CTABand({
+  location,
+  serviceAreaValue: serviceAreaValueOverride,
+}: { location?: CityPageData; serviceAreaValue?: string } = {}) {
+  const serviceAreaValue =
+    serviceAreaValueOverride ?? (location ? location.content.ctaServiceAreaValue : "Treasure Coast → Miami");
+
   return (
     <section
       id="contact"
@@ -49,7 +56,7 @@ export function CTABand() {
               }}
             >
               A short conversation gets you a clear proposal &mdash; scope,
-              timeline, and pricing. Same-day responses.
+              timeline, and pricing.
             </p>
 
             <div style={{ display: "grid", gap: "var(--space-6)", maxWidth: "28rem" }}>
@@ -69,11 +76,7 @@ export function CTABand() {
               />
               <ContactRow
                 label="Service area"
-                value="Treasure Coast → Florida Keys"
-              />
-              <ContactRow
-                label="Response window"
-                value="Same-day, often within the hour"
+                value={serviceAreaValue}
               />
             </div>
           </div>

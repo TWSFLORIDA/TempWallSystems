@@ -118,7 +118,7 @@ export function Industries() {
                   "Class I–IV barrier construction",
                   "Negative-pressure ready",
                   "HEPA & airlock compatible",
-                  "JCAHO survey documentation",
+                  "Joint Commission survey documentation",
                   "After-hours installation",
                   "Phased reconfiguration",
                 ].map((p) => (

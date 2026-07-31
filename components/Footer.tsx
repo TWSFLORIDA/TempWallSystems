@@ -1,80 +1,6 @@
 import Image from "next/image";
-
-type Region = {
-  name: string;
-  cities: string[];
-};
-
-const SERVICE_AREAS: Region[] = [
-  {
-    name: "Treasure Coast",
-    cities: [
-      "Vero Beach",
-      "Sebastian",
-      "Fort Pierce",
-      "Port St. Lucie",
-      "Stuart",
-      "Jensen Beach",
-      "Palm City",
-      "Hobe Sound",
-      "Jupiter",
-    ],
-  },
-  {
-    name: "Palm Beach County",
-    cities: [
-      "Palm Beach",
-      "West Palm Beach",
-      "Wellington",
-      "Royal Palm Beach",
-      "Lake Worth",
-      "Boynton Beach",
-      "Delray Beach",
-      "Boca Raton",
-    ],
-  },
-  {
-    name: "Broward County",
-    cities: [
-      "Fort Lauderdale",
-      "Hollywood",
-      "Pembroke Pines",
-      "Coral Springs",
-      "Pompano Beach",
-      "Davie",
-      "Plantation",
-      "Sunrise",
-      "Weston",
-      "Miramar",
-    ],
-  },
-  {
-    name: "Miami-Dade",
-    cities: [
-      "Miami",
-      "Miami Beach",
-      "Coral Gables",
-      "Coconut Grove",
-      "Doral",
-      "Hialeah",
-      "Aventura",
-      "Kendall",
-      "Homestead",
-      "Cutler Bay",
-    ],
-  },
-  {
-    name: "Florida Keys",
-    cities: [
-      "Key Largo",
-      "Tavernier",
-      "Islamorada",
-      "Marathon",
-      "Big Pine Key",
-      "Key West",
-    ],
-  },
-];
+import Link from "next/link";
+import { SERVICE_AREAS, TOTAL_CITY_COUNT } from "@/lib/serviceAreas";
 
 export function Footer() {
   return (
@@ -123,7 +49,7 @@ export function Footer() {
               }}
             >
               ICRA-rated modular wall systems for occupied renovations across
-              South Florida and the Florida Keys.
+              Southeast Florida.
             </p>
           </div>
 
@@ -175,6 +101,7 @@ export function Footer() {
             <FooterContactLink href="#industries" label="Industries we serve" />
             <FooterContactLink href="#icra" label="ICRA containment" />
             <FooterContactLink href="#gallery" label="Project gallery" />
+            <FooterContactLink href="/use-cases" label="Use cases by facility type" />
             <FooterContactLink href="#contact" label="Request a proposal" />
           </div>
         </div>
@@ -191,7 +118,7 @@ export function Footer() {
               marginBottom: "var(--space-8)",
             }}
           >
-            <h4
+            <h3
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: "var(--text-xl)",
@@ -200,12 +127,12 @@ export function Footer() {
               }}
             >
               Service area
-            </h4>
+            </h3>
             <span
               className="label-mono"
               style={{ color: "var(--color-ink-on-dark-soft)" }}
             >
-              Treasure Coast → Florida Keys · {totalCities()}+ cities
+              Treasure Coast → Miami · {TOTAL_CITY_COUNT}+ cities
             </span>
           </div>
 
@@ -237,14 +164,15 @@ export function Footer() {
                 >
                   {region.cities.map((city) => (
                     <li
-                      key={city}
+                      key={city.slug}
                       style={{
                         fontSize: "var(--text-sm)",
-                        color: "var(--color-ink-on-dark-soft)",
                         lineHeight: 1.4,
                       }}
                     >
-                      {city}
+                      <Link href={`/locations/${city.slug}`} className="ft-area-link">
+                        {city.name}
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -269,7 +197,7 @@ export function Footer() {
             letterSpacing: "0.04em",
           }}
         >
-          <span>© {new Date().getFullYear()} TWS South Florida · A Temporary Wall Systems franchise</span>
+          <span>© {new Date().getFullYear()} TWS Southeast Florida · A Temporary Wall Systems franchise</span>
           <span>Privacy · Terms</span>
         </div>
       </div>
@@ -286,6 +214,12 @@ export function Footer() {
           transition: color var(--dur-fast) var(--ease-out);
         }
         .ft-link:hover { color: var(--color-accent); }
+        .ft-area-link {
+          color: var(--color-ink-on-dark-soft);
+          text-decoration: none;
+          transition: color var(--dur-fast) var(--ease-out);
+        }
+        .ft-area-link:hover { color: var(--color-accent); }
         @media (max-width: 1024px) {
           .ft-areas { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
         }
@@ -315,6 +249,3 @@ function FooterContactLink({ href, label }: { href: string; label: string }) {
   );
 }
 
-function totalCities() {
-  return SERVICE_AREAS.reduce((acc, r) => acc + r.cities.length, 0);
-}

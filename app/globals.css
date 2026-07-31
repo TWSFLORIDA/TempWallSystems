@@ -262,3 +262,57 @@ p { max-width: 60ch; }
     transition-duration: 150ms !important;
   }
 }
+
+/* =========================================================================
+   ADMIN CRM THEME  (ported from Lot Sealers)
+   Scoped to .admin-theme so it never affects the marketing site.
+   ========================================================================= */
+
+.admin-theme {
+  --admin-surface-1: #ffffff;
+  --admin-surface-2: #ffffff;
+  --admin-surface-3: #f7fafc;
+  --admin-surface-4: #f4f8fb;
+  --admin-surface-5: #eef4f9;
+  --admin-surface-6: #e6f0f7;
+
+  --admin-border-subtle:  #eef4f9;
+  --admin-border-default: #e8eef4;
+  --admin-border-strong:  #dce8f0;
+  --admin-border-accent:  #2d72a8;
+
+  --admin-text-primary:   #0a2240;
+  --admin-text-secondary: #6b7f8e;
+  --admin-text-tertiary:  #8a9db0;
+  --admin-text-disabled:  #b3c4d1;
+  --admin-text-accent:    #2d72a8;
+
+  --admin-accent:  #2d72a8;
+  --admin-success: #2d8a5b;
+  --admin-warning: #b8860b;
+  --admin-error:   #c0492e;
+  --admin-info:    #2d72a8;
+
+  color-scheme: light;
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/* Admin-scoped scrollbar styling */
+.admin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(45, 114, 168, 0.35) transparent;
+}
+.admin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.admin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(45, 114, 168, 0.35);
+  border-radius: 3px;
+}
+.admin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(45, 114, 168, 0.55);
+}

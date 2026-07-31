@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSubmitLead } from "@/app/useLeads";
 
 type Variant = "hero" | "section";
 
@@ -16,16 +17,31 @@ const PROJECT_TYPES = [
 ];
 
 export function LeadForm({ variant = "hero" }: { variant?: Variant }) {
-  const [state, setState] = useState<"idle" | "submitting" | "success">(
+  const [state, setState] = useState<"idle" | "submitting" | "success" | "error">(
     "idle"
   );
+  const submitLead = useSubmitLead();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setState("submitting");
-    // [PLACEHOLDER] Wire to your form handler — Formspree, HubSpot, Make.com webhook, etc.
-    await new Promise((r) => setTimeout(r, 700));
-    setState("success");
+    const fd = new FormData(e.currentTarget);
+    try {
+      await submitLead({
+        name: String(fd.get("name") ?? ""),
+        email: String(fd.get("email") ?? ""),
+        phone: String(fd.get("phone") ?? ""),
+        company: String(fd.get("company") ?? ""),
+        projectType: String(fd.get("project-type") ?? ""),
+        zip: String(fd.get("zip") ?? ""),
+        message: String(fd.get("message") ?? ""),
+        source: variant === "hero" ? "hero_form" : "section_form",
+      });
+      setState("success");
+    } catch (err) {
+      console.error("Lead submit failed", err);
+      setState("error");
+    }
   }
 
   const isHero = variant === "hero";
@@ -63,7 +79,7 @@ export function LeadForm({ variant = "hero" }: { variant?: Variant }) {
             color: "var(--color-ink-0)",
           }}
         >
-          Nick will get back to you the same day.
+          Nick will get back to you personally.
         </h3>
         <p style={{ fontSize: "var(--text-sm)", color: "var(--color-ink-3)" }}>
           For active jobs, ring{" "}
@@ -113,7 +129,7 @@ export function LeadForm({ variant = "hero" }: { variant?: Variant }) {
             lineHeight: 1.25,
           }}
         >
-          Same-day response.
+          Get a clear proposal.
         </h2>
       </div>
 
@@ -175,6 +191,23 @@ export function LeadForm({ variant = "hero" }: { variant?: Variant }) {
             placeholder="Tell us about the space, timeline, and any compliance requirements."
           />
         </div>
+      )}
+
+      {state === "error" && (
+        <p
+          role="alert"
+          style={{
+            fontSize: "var(--text-sm)",
+            color: "var(--color-accent)",
+            margin: 0,
+          }}
+        >
+          Something went wrong. Please try again, or call{" "}
+          <a href="tel:+15617774958" style={{ fontWeight: 600 }}>
+            (561) 777-4958
+          </a>
+          .
+        </p>
       )}
 
       <button

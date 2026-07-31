@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSubmitLead } from "@/app/useLeads";
 
 /**
  * Full-screen multi-step quote flow.
@@ -55,6 +56,8 @@ export function QuoteFlowModal() {
   const [step, setStep] = useState(0);
   const [selections, setSelections] = useState<Selections>({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
+  const submitLead = useSubmitLead();
 
   // Listen for the nav's open event
   useEffect(() => {
@@ -62,6 +65,7 @@ export function QuoteFlowModal() {
       setOpen(true);
       setStep(0);
       setSelections({});
+      setSubmitError(false);
     }
     window.addEventListener("open-quote-flow", handleOpen as EventListener);
     return () =>
@@ -96,10 +100,27 @@ export function QuoteFlowModal() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
-    // [PLACEHOLDER] Wire to your real handler — pass `selections` + form fields.
-    await new Promise((r) => setTimeout(r, 700));
-    setStep(4);
-    setSubmitting(false);
+    const fd = new FormData(e.currentTarget);
+    try {
+      await submitLead({
+        name: String(fd.get("name") ?? ""),
+        email: String(fd.get("email") ?? ""),
+        phone: String(fd.get("phone") ?? ""),
+        company: String(fd.get("company") ?? ""),
+        zip: String(fd.get("zip") ?? ""),
+        message: String(fd.get("notes") ?? ""),
+        industry: selections.industry,
+        scope: selections.scope,
+        timeline: selections.timeline,
+        source: "quote_flow",
+      });
+      setStep(4);
+    } catch (err) {
+      console.error("Quote lead submit failed", err);
+      setSubmitError(true);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -107,7 +128,7 @@ export function QuoteFlowModal() {
       <div className="qf-shell">
         {/* Top bar — close + progress */}
         <header className="qf-top">
-          <div className="qf-brand">TWS · SOUTH FLORIDA</div>
+          <div className="qf-brand">TWS · SOUTHEAST FLORIDA</div>
           {step < 4 && <ProgressDots current={step} total={TOTAL_STEPS} />}
           <button
             type="button"
@@ -160,6 +181,7 @@ export function QuoteFlowModal() {
             <DetailsForm
               selections={selections}
               submitting={submitting}
+              error={submitError}
               onSubmit={handleSubmit}
             />
           )}
@@ -437,10 +459,12 @@ function Step({
 function DetailsForm({
   selections,
   submitting,
+  error,
   onSubmit,
 }: {
   selections: Selections;
   submitting: boolean;
+  error?: boolean;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }) {
   return (
@@ -482,6 +506,16 @@ function DetailsForm({
             placeholder="Site quirks, compliance requirements, dates we should know about…"
           />
         </div>
+
+        {error && (
+          <p
+            role="alert"
+            style={{ color: "var(--color-accent)", fontSize: "var(--text-sm)", margin: 0 }}
+          >
+            Something went wrong sending your request. Please try again, or call
+            (561) 777-4958.
+          </p>
+        )}
 
         <button type="submit" disabled={submitting} className="qf-submit">
           {submitting ? (
@@ -694,7 +728,7 @@ function Success({ onClose }: { onClose: () => void }) {
           marginBottom: "var(--space-4)",
         }}
       >
-        Nick will get back to you the same day.
+        Nick will get back to you personally.
       </h2>
       <p
         style={{
