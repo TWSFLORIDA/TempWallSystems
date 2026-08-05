@@ -223,9 +223,10 @@ function TableView({
 export function LeadsPageClient({ leads: initial }: { leads: Lead[] }) {
   const searchParams = useSearchParams()
   const initialStage = searchParams.get("stage") as LeadStatus | null
+  const initialView = searchParams.get("view") as "board" | "table" | null
 
   const [leads, setLeads] = useState<Lead[]>(initial)
-  const [view, setView] = useState<"board" | "table">(initialStage ? "table" : "board")
+  const [view, setView] = useState<"board" | "table">(initialView ?? (initialStage ? "table" : "board"))
   const [search, setSearch] = useState("")
   const [stageFilter, setStageFilter] = useState<LeadStatus | null>(initialStage)
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -324,7 +325,7 @@ export function LeadsPageClient({ leads: initial }: { leads: Lead[] }) {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl lg:text-[30px] font-bold text-[#0a2240] uppercase tracking-tight" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.04em" }}>Pipeline</h1>
+          <h1 className="text-2xl lg:text-[30px] font-bold text-[#0a2240] uppercase tracking-tight" style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.04em" }}>{view === "board" ? "Pipeline" : "Leads"}</h1>
           <p className="text-sm text-[#6b7f8e] mt-1.5">
             {filtered.length} leads · <span className="font-semibold text-[#2d8a5b]">{formatCurrency(openTotal)}</span> open value
           </p>

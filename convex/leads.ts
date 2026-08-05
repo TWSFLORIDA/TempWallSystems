@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { LEAD_STATUSES } from "./schema";
+import { internal } from "./_generated/api";
 
 const statusValidator = v.union(...LEAD_STATUSES.map((s) => v.literal(s)));
 
@@ -16,6 +17,19 @@ const STAGE_PROB: Record<string, number> = {
   ARCHIVED: 0.0,
 };
 const OPEN = ["NEW", "CONTACTED", "QUALIFIED", "PROPOSAL_SENT", "NEGOTIATING"];
+
+// Human labels for capture-surface source tags — mirrors lib/pipeline.ts's
+// formatSource (duplicated here since Convex's bundler only resolves within
+// convex/).
+const SOURCE_LABELS: Record<string, string> = {
+  hero_form: "Hero form",
+  section_form: "Section form",
+  quote_flow: "Quote flow",
+  exit_intent: "Exit intent",
+};
+function formatSource(source: string): string {
+  return SOURCE_LABELS[source] ?? source.replace(/_/g, " ");
+}
 
 /**
  * Public mutation — called from the marketing site's capture forms.
@@ -48,9 +62,20 @@ export const create = mutation({
     await ctx.db.insert("leadEvents", {
       leadId,
       type: "created",
-      detail: `Lead captured${args.source ? ` via ${args.source}` : ""}`,
+      detail: `Lead captured${args.source ? ` via ${formatSource(args.source)}` : ""}`,
       toStatus: "NEW",
       at: Date.now(),
+    });
+    await ctx.scheduler.runAfter(0, internal.email.sendLeadNotification, {
+      name: args.name,
+      email: args.email,
+      phone: args.phone,
+      company: args.company,
+      service,
+      city: args.city,
+      zip: args.zip,
+      message: args.message,
+      source: args.source,
     });
     return leadId;
   },
@@ -223,17 +248,20 @@ export const update = mutation({
     message: v.optional(v.string()),
     status: v.optional(statusValidator),
     estimatedValue: v.optional(v.number()),
-    expectedCloseDate: v.optional(v.number()),
+    expectedCloseDate: v.optional(v.union(v.number(), v.null())),
     followUpDate: v.optional(v.union(v.number(), v.null())),
   },
   handler: async (ctx, args) => {
-    const { id, followUpDate, ...rest } = args;
+    const { id, followUpDate, expectedCloseDate, ...rest } = args;
     const current = await ctx.db.get(id);
     if (!current) throw new Error("Lead not found");
 
     const updates: Record<string, unknown> = { ...rest };
     if (followUpDate !== undefined) {
       updates.followUpDate = followUpDate ?? undefined;
+    }
+    if (expectedCloseDate !== undefined) {
+      updates.expectedCloseDate = expectedCloseDate ?? undefined;
     }
     if (updates.status === "WON" || updates.status === "LOST") {
       updates.closedAt = Date.now();

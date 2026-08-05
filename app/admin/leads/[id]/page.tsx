@@ -7,11 +7,12 @@ import { useMutation, useQuery } from "convex/react"
 import { api } from "@/convex/_generated/api"
 import type { Id } from "@/convex/_generated/dataModel"
 import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 import {
-  ArrowLeft, Phone, Mail, MapPin, Building2, Trash2,
+  ArrowLeft, Phone, Mail, MapPin, Building2, Trash2, Radio,
 } from "lucide-react"
 import {
-  BOARD_STAGES, STAGE_META, stageMeta, formatCurrency, type LeadStatus,
+  BOARD_STAGES, STAGE_META, stageMeta, formatCurrency, formatSource, type LeadStatus,
 } from "@/lib/pipeline"
 
 const CARD = "bg-white border border-[#e8eef4] rounded-[3px] shadow-[0_1px_3px_rgba(10,34,64,0.04)]"
@@ -89,6 +90,15 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         <span className="text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-[2px]" style={{ color: m.color, background: m.tint }}>{m.label}</span>
       </div>
 
+      <div className="flex flex-wrap gap-2.5 mb-6">
+        <a href={`tel:${lead.phone}`} className={cn("inline-flex items-center gap-1.5 h-9 px-3.5 rounded-[3px] text-[12.5px] font-semibold border border-[#dce8f0] bg-white text-[#0a2240] hover:bg-[#f4f8fb] transition-colors", !lead.phone && "pointer-events-none opacity-40")}>
+          <Phone className="w-3.5 h-3.5" /> Call
+        </a>
+        <a href={`mailto:${lead.email}`} className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-[3px] text-[12.5px] font-semibold border border-[#dce8f0] bg-white text-[#0a2240] hover:bg-[#f4f8fb] transition-colors">
+          <Mail className="w-3.5 h-3.5" /> Email
+        </a>
+      </div>
+
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Left: contact + activity */}
         <div className="lg:col-span-2 space-y-6">
@@ -99,6 +109,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
               {lead.phone && <a href={`tel:${lead.phone}`} className="flex items-center gap-2.5 hover:text-[#2d72a8]"><Phone className="w-4 h-4 text-[#8a9db0]" />{lead.phone}</a>}
               {lead.company && <p className="flex items-center gap-2.5"><Building2 className="w-4 h-4 text-[#8a9db0]" />{lead.company}</p>}
               {(lead.city || lead.zip) && <p className="flex items-center gap-2.5"><MapPin className="w-4 h-4 text-[#8a9db0]" />{[lead.city, lead.zip].filter(Boolean).join(" · ")}</p>}
+              {lead.source && <p className="flex items-center gap-2.5"><Radio className="w-4 h-4 text-[#8a9db0]" />Source: <span className="font-semibold">{formatSource(lead.source)}</span></p>}
             </div>
             {lead.message && (
               <div className="mt-5 pt-5 border-t border-[#eef4f9]">
@@ -170,6 +181,14 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 className="w-full h-9 pl-7 pr-3 rounded-[3px] border border-[#dce8f0] bg-white text-[13px] text-[#0a2240] focus:outline-none focus:border-[#2d72a8]"
               />
             </div>
+
+            <label className="block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a9db0] mt-5 mb-2">Expected close date</label>
+            <input
+              type="date"
+              defaultValue={toDateInput(lead.expectedCloseDate)}
+              onChange={(e) => patch({ expectedCloseDate: fromDateInput(e.target.value) })}
+              className="w-full h-9 px-3 rounded-[3px] border border-[#dce8f0] bg-white text-[13px] text-[#0a2240] focus:outline-none focus:border-[#2d72a8]"
+            />
 
             <label className="block text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8a9db0] mt-5 mb-2">Follow-up date</label>
             <input

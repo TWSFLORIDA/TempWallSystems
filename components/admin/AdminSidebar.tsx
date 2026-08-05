@@ -1,11 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
   Users,
+  List,
   LogOut,
   Menu,
   X,
@@ -45,6 +46,7 @@ interface NavItem {
 const navigation: NavItem[] = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Pipeline", href: "/admin/leads", icon: Users },
+  { name: "Leads", href: "/admin/leads?view=table", icon: List },
 ]
 
 // ---------------------------------------------------------------------------
@@ -61,6 +63,7 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ isCollapsed: controlledCollapsed, onCollapsedChange }: AdminSidebarProps) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [internalCollapsed, setInternalCollapsed] = useState(false)
@@ -93,7 +96,12 @@ export function AdminSidebar({ isCollapsed: controlledCollapsed, onCollapsedChan
 
   const isActive = (href: string) => {
     if (href === "/admin") return pathname === "/admin"
-    return pathname.startsWith(href)
+    const [hrefPath, hrefQuery] = href.split("?")
+    if (pathname !== hrefPath) return false
+    if (hrefPath !== "/admin/leads") return true
+    const hrefView = new URLSearchParams(hrefQuery).get("view") ?? "board"
+    const currentView = searchParams.get("view") ?? "board"
+    return hrefView === currentView
   }
 
   const NavContent = ({ showLabels = true }: { showLabels?: boolean }) => (

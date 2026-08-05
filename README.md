@@ -44,7 +44,6 @@ npm run start
 | Testimonials | `Testimonials.tsx` (top of file) | Replace the `QUOTES` array with real client-approved quotes. **Per Hallmark honest-copy rule, no invented quotes ship by default** — the page renders a labelled empty state until you fill these in. |
 | Partner logos | `Partners.tsx` | Replace each text `<span>` with an `<img src="/partners/foo.svg" alt="..." />`. Drop logos in `public/partners/`. |
 | Form handler | `LeadForm.tsx` (`onSubmit`) | Wire to your real endpoint — Formspree, HubSpot, Make.com webhook, custom API route. Currently simulates a 700ms delay and shows success. |
-| `metadataBase` URL | `app/layout.tsx` | Replace `https://twssouthflorida.com` with the real production domain. |
 
 ---
 

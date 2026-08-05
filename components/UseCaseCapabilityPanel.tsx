@@ -12,7 +12,7 @@ import type { UseCasePageData } from "@/lib/useCaseContent";
  * internal-linking mesh.
  */
 export function UseCaseCapabilityPanel({ data }: { data: UseCasePageData }) {
-  const { content, children } = data;
+  const { useCase, content, children } = data;
 
   return (
     <section id="capability" className="section">
@@ -20,8 +20,8 @@ export function UseCaseCapabilityPanel({ data }: { data: UseCasePageData }) {
         <div className="uc-panel-grid">
           <div className="uc-panel-photo">
             <Image
-              src="/icra-corridor.png"
-              alt="TWS modular containment barrier installed in an occupied corridor"
+              src="/icra-containment-wall-hospital-corridor.png"
+              alt={`TWS modular containment wall for ${useCase.name} — installed in an occupied hospital corridor`}
               fill
               sizes="(max-width: 900px) 100vw, 55vw"
               style={{ objectFit: "cover" }}

@@ -6,6 +6,8 @@ import { LogoTicker } from "@/components/LogoTicker";
 import { Industries } from "@/components/Industries";
 import { Gallery } from "@/components/Gallery";
 import { ServiceCapabilityPanel } from "@/components/ServiceCapabilityPanel";
+import { EquipmentSpec } from "@/components/EquipmentSpec";
+import { EQUIPMENT } from "@/lib/equipment";
 import { ServiceRelatedUseCases } from "@/components/ServiceRelatedUseCases";
 import { ServiceCityDirectory } from "@/components/ServiceCityDirectory";
 import { FaqAccordion } from "@/components/FaqAccordion";
@@ -92,7 +94,35 @@ export default async function ServicePage({
         }}
       />
       <LogoTicker />
-      <ServiceCapabilityPanel data={data} />
+      <ServiceCapabilityPanel
+        data={data}
+        photoOverride={
+          data.service.key === "negative-air-hepa-filtration"
+            ? {
+                src: "/negative-air-machine-rental-in-south-florida.png",
+                alt: "HEPA-AIRE H2KM negative air machine by Abatement Technologies — available for negative air machine rental in South Florida",
+                fit: "contain",
+              }
+            : undefined
+        }
+        contentOverride={
+          data.service.key === "negative-air-hepa-filtration"
+            ? {
+                eyebrow: "Equipment we run",
+                heading: `${EQUIPMENT.h2km.brand} ${EQUIPMENT.h2km.name}`,
+                summary: EQUIPMENT.h2km.tagline,
+                facts: EQUIPMENT.h2km.specs,
+              }
+            : undefined
+        }
+        compactBottom={data.service.key === "negative-air-hepa-filtration"}
+      />
+      {data.service.key === "negative-air-hepa-filtration" && (
+        <>
+          <EquipmentSpec equipment={EQUIPMENT.predator750} compactTop compactBottom />
+          <EquipmentSpec equipment={EQUIPMENT.ag8000pas} compactTop />
+        </>
+      )}
       <ServiceRelatedUseCases service={data.service} />
       <Industries />
       <Gallery emphasisIndustries={data.service.relevantIndustries} />

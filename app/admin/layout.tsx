@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { usePathname } from "next/navigation"
 import { Toaster } from "sonner"
 import { AdminSidebar } from "@/components/admin/AdminSidebar"
@@ -41,7 +41,9 @@ export default function AdminDashboardLayout({
 
   return (
     <div className="admin-theme min-h-screen bg-[#f4f8fb]">
-      <AdminSidebar isCollapsed={isCollapsed} onCollapsedChange={setIsCollapsed} />
+      <Suspense fallback={null}>
+        <AdminSidebar isCollapsed={isCollapsed} onCollapsedChange={setIsCollapsed} />
+      </Suspense>
       <main
         className={cn(
           "transition-all duration-300 ease-in-out",

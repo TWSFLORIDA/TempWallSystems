@@ -23,8 +23,8 @@ export function ServiceCityCombinedPanel({ data }: { data: ServiceCityPageData }
         <div className="svc-panel-grid">
           <div className="svc-panel-photo">
             <Image
-              src="/icra-corridor.png"
-              alt={`TWS modular containment barrier installed in ${city.name}, FL`}
+              src="/icra-containment-wall-hospital-corridor.png"
+              alt={`TWS ${service.name} — modular containment wall installed in ${city.name}, FL`}
               fill
               sizes="(max-width: 900px) 100vw, 55vw"
               style={{ objectFit: "cover" }}

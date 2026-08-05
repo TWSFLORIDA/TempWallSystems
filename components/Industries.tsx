@@ -167,8 +167,8 @@ export function Industries() {
             className="icra-photo"
           >
             <Image
-              src="/icra-corridor.png"
-              alt="Healthcare ICRA containment — nurse charting in a sealed corridor with TWS modular wall panels"
+              src="/icra-containment-wall-hospital-nursing-station.png"
+              alt="Healthcare ICRA containment — nurse at a hospital nursing station beside a sealed corridor with TWS modular wall panels"
               fill
               sizes="(max-width: 900px) 100vw, 50vw"
               style={{ objectFit: "cover" }}

@@ -1,5 +1,17 @@
 import { mutation } from "./_generated/server";
 
+// Mirrors lib/pipeline.ts's formatSource — duplicated since Convex's
+// bundler only resolves within convex/.
+const SOURCE_LABELS: Record<string, string> = {
+  hero_form: "Hero form",
+  section_form: "Section form",
+  quote_flow: "Quote flow",
+  exit_intent: "Exit intent",
+};
+function formatSource(source: string): string {
+  return SOURCE_LABELS[source] ?? source.replace(/_/g, " ");
+}
+
 /**
  * One-off demo data for previewing the CRM. Not called from the app —
  * run manually with `npx convex run seed:seedDemoLeads`, then delete this
@@ -71,7 +83,7 @@ export const seedDemoLeads = mutation({
       await ctx.db.insert("leadEvents", {
         leadId,
         type: "created",
-        detail: `Lead captured via ${l.source}`,
+        detail: `Lead captured via ${formatSource(l.source)}`,
         toStatus: "NEW",
         at: now,
       });

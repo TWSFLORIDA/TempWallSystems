@@ -93,7 +93,7 @@ export function VideoBand() {
             <video
               ref={videoRef}
               src="/tws-install.mp4"
-              poster="/tws-install-poster.jpg"
+              poster="/temporary-wall-installation-video-poster.jpg"
               controls={playing}
               playsInline
               preload="metadata"

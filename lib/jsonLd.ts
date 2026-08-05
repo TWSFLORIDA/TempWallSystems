@@ -121,7 +121,7 @@ export function buildVideoObjectSchema() {
     name: "TWS ICRA Containment Wall Installation",
     description:
       "TWS installs a modular ICRA-rated containment wall in an occupied facility — sealed, quiet, and removed without a trace.",
-    thumbnailUrl: [`${SITE_URL}/tws-install-poster.jpg`],
+    thumbnailUrl: [`${SITE_URL}/temporary-wall-installation-video-poster.jpg`],
     contentUrl: `${SITE_URL}/tws-install.mp4`,
     uploadDate: "2026-05-21",
     duration: "PT2M44S",

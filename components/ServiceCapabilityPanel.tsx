@@ -1,36 +1,79 @@
 import Image from "next/image";
 import type { ServicePageData } from "@/lib/serviceContent";
 
+export interface ServicePhotoOverride {
+  src: string;
+  alt: string;
+  /** "contain" for product shots on white/transparent backgrounds (adds a padded card behind them); "cover" (default) for full-bleed photography. */
+  fit?: "cover" | "contain";
+}
+
+export interface ServiceContentOverride {
+  eyebrow?: string;
+  heading: string;
+  summary: string;
+  facts: string[];
+}
+
 /**
  * Standalone service page's lead content block — same two-column visual
  * language as LocationContent's map+card grid (own scoped classes, matching
  * spacing/radius/color tokens), but the map slot is replaced by the real
  * ICRA corridor photo (already used in components/Industries.tsx) since
- * there's no map to show for a service page.
+ * there's no map to show for a service page. `photoOverride` lets a specific
+ * service (e.g. negative-air-hepa-filtration) swap in its own product photo
+ * instead of the shared corridor shot. `contentOverride` likewise lets a
+ * specific service replace the generic heading/summary/facts with copy
+ * about one specific unit (e.g. the HEPA-AIRE H2KM) instead.
  */
-export function ServiceCapabilityPanel({ data }: { data: ServicePageData }) {
+export function ServiceCapabilityPanel({
+  data,
+  photoOverride,
+  contentOverride,
+  compactBottom,
+}: {
+  data: ServicePageData;
+  photoOverride?: ServicePhotoOverride;
+  contentOverride?: ServiceContentOverride;
+  /** Tighter bottom padding when another equipment row immediately follows. */
+  compactBottom?: boolean;
+}) {
   const { service, content } = data;
+  const photo: ServicePhotoOverride = photoOverride ?? {
+    src: "/icra-containment-wall-hospital-corridor.png",
+    alt: `TWS ${service.name} — modular containment wall installed in an occupied hospital corridor`,
+    fit: "cover",
+  };
+  const body: ServiceContentOverride = contentOverride ?? {
+    eyebrow: "What's included",
+    heading: service.name,
+    summary: content.overview,
+    facts: content.capabilityFacts,
+  };
 
   return (
-    <section id="capability" className="section">
+    <section id="capability" className="section" style={compactBottom ? { paddingBottom: "var(--space-8)" } : undefined}>
       <div className="container-wide">
         <div className="svc-panel-grid">
-          <div className="svc-panel-photo">
+          <div
+            className="svc-panel-photo"
+            style={photo.fit === "contain" ? { background: "var(--color-paper-2)", padding: "var(--space-5)" } : undefined}
+          >
             <Image
-              src="/icra-corridor.png"
-              alt="TWS modular containment barrier installed in an occupied corridor"
+              src={photo.src}
+              alt={photo.alt}
               fill
               sizes="(max-width: 900px) 100vw, 55vw"
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: photo.fit ?? "cover" }}
             />
           </div>
 
           <div className="svc-panel-card">
             <p className="label-mono" style={{ marginBottom: "var(--space-3)", color: "var(--color-ink-4)" }}>
-              What's included
+              {body.eyebrow}
             </p>
-            <h2 className="svc-panel-heading">{service.name}</h2>
-            <p className="svc-panel-summary">{content.overview}</p>
+            <h2 className="svc-panel-heading">{body.heading}</h2>
+            <p className="svc-panel-summary">{body.summary}</p>
 
             {content.proofStat && (
               <div className="svc-stat">
@@ -40,7 +83,7 @@ export function ServiceCapabilityPanel({ data }: { data: ServicePageData }) {
             )}
 
             <ul className="svc-facts">
-              {content.capabilityFacts.map((fact) => (
+              {body.facts.map((fact) => (
                 <li key={fact} className="svc-fact">
                   {fact}
                 </li>
@@ -54,11 +97,11 @@ export function ServiceCapabilityPanel({ data }: { data: ServicePageData }) {
             display: grid;
             grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
             gap: var(--space-8);
-            align-items: start;
+            align-items: stretch;
           }
           .svc-panel-photo {
             position: relative;
-            height: 26rem;
+            min-height: 20rem;
             border-radius: var(--radius-md);
             border: 1px solid var(--color-rule-strong);
             overflow: hidden;

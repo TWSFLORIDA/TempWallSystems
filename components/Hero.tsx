@@ -67,8 +67,8 @@ export function Hero({
     >
       {/* Hero background photo — real TWS installation */}
       <Image
-        src="/hero-bg.jpg?v=mdc"
-        alt=""
+        src="/modular-containment-wall-installation-parking-structure.jpg"
+        alt="Modular temporary containment wall installed along a covered walkway at a Southeast Florida facility"
         fill
         priority
         sizes="100vw"

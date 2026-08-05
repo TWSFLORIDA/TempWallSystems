@@ -74,6 +74,20 @@ export function formatCurrency(n: number | null | undefined): string {
   return "$" + v.toLocaleString("en-US")
 }
 
+/** Human labels for the site's capture-surface source tags (see app/useLeads.ts). */
+const SOURCE_LABELS: Record<string, string> = {
+  hero_form: "Hero form",
+  section_form: "Section form",
+  quote_flow: "Quote flow",
+  exit_intent: "Exit intent",
+}
+
+/** Turn a raw source tag (e.g. "hero_form") into a human label ("Hero form"). */
+export function formatSource(source: string | null | undefined): string {
+  if (!source) return ""
+  return SOURCE_LABELS[source] ?? source.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase())
+}
+
 /** Compact currency for tight spaces (e.g. $12.5k, $9M, $4.05M). */
 export function formatCurrencyCompact(n: number | null | undefined): string {
   const v = n || 0

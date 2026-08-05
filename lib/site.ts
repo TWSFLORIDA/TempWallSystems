@@ -4,7 +4,7 @@
  * components/CTABand.tsx and app/layout.tsx — never invent new ones here.
  */
 
-export const SITE_URL = "https://twssouthflorida.com";
+export const SITE_URL = "https://twssouthfl.com";
 export const SITE_NAME = "TWS Southeast Florida";
 export const PHONE_DISPLAY = "(561) 777-4958";
 export const PHONE_TEL = "+15617774958";
