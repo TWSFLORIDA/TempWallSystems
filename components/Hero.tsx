@@ -294,7 +294,7 @@ export function Hero({
           .hero-title-block { display: none; }
         }
         @media (max-width: 900px) {
-          section#top > .container-wide {
+          section#top .hero-content {
             grid-template-columns: 1fr !important;
             gap: var(--space-12) !important;
             padding-block: var(--space-16) !important;

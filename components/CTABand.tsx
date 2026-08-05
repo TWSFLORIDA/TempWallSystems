@@ -133,6 +133,8 @@ function ContactRow({
             textDecoration: "none",
             fontWeight: 500,
             fontFamily: "var(--font-display)",
+            overflowWrap: "anywhere",
+            minWidth: 0,
           }}
         >
           {value}
@@ -143,6 +145,8 @@ function ContactRow({
             color: "var(--color-ink-on-dark)",
             fontWeight: 500,
             fontFamily: "var(--font-display)",
+            overflowWrap: "anywhere",
+            minWidth: 0,
           }}
         >
           {value}

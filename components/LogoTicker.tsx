@@ -25,6 +25,10 @@ type Logo = {
 // and renders invisibly against the white section background — drop a
 // dark-version Walsh logo into /partners/walsh.png to re-enable.
 const LOGOS: Logo[] = [
+  // Leads the ticker — largest healthcare-sector GC in the group, and its
+  // stacked two-line wordmark is dense enough to keep serving as the
+  // bookend anchor Whiting-Turner used to be.
+  { name: "Brasfield & Gorrie", src: "/partners/brasfield-gorrie.png", height: 96 },
   { name: "Whiting-Turner", src: "/partners/whiting-turner.png" },
   { name: "HCA Florida", src: "/partners/hca-florida.png" },
   { name: "Memorial", src: "/partners/memorial.png" },

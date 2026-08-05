@@ -32,6 +32,45 @@ export function Nav() {
   const servicesRef = useRef<HTMLLIElement>(null);
   const servicesPanelRef = useRef<HTMLDivElement>(null);
 
+  // Mobile drawer — its own state, separate from the desktop mega menus
+  // above (different interaction model: accordion sections in a full-screen
+  // panel instead of hover/click dropdowns).
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [mobileAreaOpen, setMobileAreaOpen] = useState(false);
+  const [mobileRegion, setMobileRegion] = useState<string | null>(null);
+
+  // Lock body scroll while the mobile drawer is open.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen]);
+
+  // ESC closes the mobile drawer; reset its accordion state once closed.
+  useEffect(() => {
+    if (!mobileOpen) {
+      const t = setTimeout(() => {
+        setMobileServicesOpen(false);
+        setMobileAreaOpen(false);
+        setMobileRegion(null);
+      }, 250);
+      return () => clearTimeout(t);
+    }
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") setMobileOpen(false);
+    }
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [mobileOpen]);
+
+  function closeMobile() {
+    setMobileOpen(false);
+  }
+
   // Reset region selection when the menu closes
   useEffect(() => {
     if (!areaOpen) {
@@ -112,7 +151,7 @@ export function Nav() {
         }}
       >
         <div
-          className="container-wide"
+          className="container-wide util-bar-inner"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr auto 1fr",
@@ -123,9 +162,11 @@ export function Nav() {
         >
           <span
             aria-label="Service area"
+            className="util-area"
             style={{ justifySelf: "start", textTransform: "uppercase" }}
           >
-            Southeast Florida · Treasure Coast → Miami
+            <span className="util-area-full">Southeast Florida · Treasure Coast → Miami</span>
+            <span className="util-area-short">Southeast Florida</span>
           </span>
           <span />
           <a
@@ -150,7 +191,7 @@ export function Nav() {
         }}
       >
         <nav
-          className="container-wide"
+          className="container-wide main-nav-row"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr auto 1fr",
@@ -162,6 +203,7 @@ export function Nav() {
           <a
             href="#top"
             aria-label="TWS Southeast Florida — home"
+            className="nav-logo-link"
             style={{
               display: "flex",
               alignItems: "center",
@@ -176,6 +218,7 @@ export function Nav() {
               width={300}
               height={143}
               priority
+              className="nav-logo-img"
               style={{ height: "56px", width: "auto", display: "block" }}
             />
           </a>
@@ -250,6 +293,18 @@ export function Nav() {
 
           <button
             type="button"
+            onClick={() => setMobileOpen(true)}
+            aria-expanded={mobileOpen}
+            aria-label="Open menu"
+            className="mobile-menu-btn"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
+          <button
+            type="button"
             onClick={() =>
               window.dispatchEvent(new CustomEvent("open-quote-flow"))
             }
@@ -276,6 +331,160 @@ export function Nav() {
             </svg>
           </button>
         </nav>
+
+        {/* Mobile drawer — full-screen panel, own accordion-style Services
+            and Service Area sections (the desktop two-step mega menus don't
+            fit a phone screen, so this flattens both into expand/collapse
+            lists instead). Only rendered <900px (see .mobile-menu-btn /
+            .mobile-drawer CSS below); mounted/unmounted with mobileOpen so
+            it never intercepts clicks while closed. */}
+        {mobileOpen && (
+          <div className="mobile-drawer" role="dialog" aria-modal="true">
+            <div className="mobile-drawer-header">
+              <a href="#top" onClick={closeMobile} aria-label="TWS Southeast Florida — home">
+                <Image
+                  src="/tws-logo-white.webp"
+                  alt="TWS — Temporary Wall Systems"
+                  width={200}
+                  height={95}
+                  style={{ height: "40px", width: "auto", display: "block" }}
+                />
+              </a>
+              <button
+                type="button"
+                onClick={closeMobile}
+                aria-label="Close menu"
+                className="mobile-close-btn"
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+                  <path d="M1 1L17 17M17 1L1 17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mobile-drawer-body">
+              <ul className="mobile-links">
+                <li>
+                  <a href="#industries" onClick={closeMobile}>Industries</a>
+                </li>
+                <li>
+                  <a href="#gallery" onClick={closeMobile}>Projects</a>
+                </li>
+
+                {/* Services accordion */}
+                <li className="mobile-accordion">
+                  <button
+                    type="button"
+                    onClick={() => setMobileServicesOpen((v) => !v)}
+                    aria-expanded={mobileServicesOpen}
+                    className="mobile-accordion-trigger"
+                  >
+                    Services
+                    <svg
+                      width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden
+                      style={{
+                        transform: mobileServicesOpen ? "rotate(180deg)" : "rotate(0)",
+                        transition: "transform var(--dur-fast) var(--ease-out)",
+                      }}
+                    >
+                      <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" />
+                    </svg>
+                  </button>
+                  {mobileServicesOpen && (
+                    <ul className="mobile-accordion-panel">
+                      {SERVICE_LIST.map((service) => (
+                        <li key={service.slug}>
+                          <Link href={`/services/${service.slug}`} onClick={closeMobile}>
+                            {service.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+
+                {/* Service Area accordion — region list, each region expands
+                    in place to its cities (no separate step/screen, unlike
+                    the desktop two-step picker — everything scrolls in one
+                    flat list, which reads better in a narrow panel). */}
+                <li className="mobile-accordion">
+                  <button
+                    type="button"
+                    onClick={() => setMobileAreaOpen((v) => !v)}
+                    aria-expanded={mobileAreaOpen}
+                    className="mobile-accordion-trigger"
+                  >
+                    Service Area
+                    <svg
+                      width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden
+                      style={{
+                        transform: mobileAreaOpen ? "rotate(180deg)" : "rotate(0)",
+                        transition: "transform var(--dur-fast) var(--ease-out)",
+                      }}
+                    >
+                      <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" />
+                    </svg>
+                  </button>
+                  {mobileAreaOpen && (
+                    <ul className="mobile-accordion-panel mobile-region-list">
+                      {SERVICE_AREAS.map((region) => {
+                        const open = mobileRegion === region.name;
+                        return (
+                          <li key={region.name}>
+                            <button
+                              type="button"
+                              onClick={() => setMobileRegion(open ? null : region.name)}
+                              aria-expanded={open}
+                              className="mobile-region-trigger"
+                            >
+                              {region.name}
+                              <span className="mobile-region-count">{region.cities.length}</span>
+                            </button>
+                            {open && (
+                              <ul className="mobile-city-list">
+                                {region.cities.map((city) => (
+                                  <li key={city.slug}>
+                                    <Link href={`/locations/${city.slug}`} onClick={closeMobile}>
+                                      {city.name}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </li>
+
+                <li>
+                  <a href="#contact" onClick={closeMobile}>Contact</a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mobile-drawer-footer">
+              <a href={`tel:${PHONE_TEL}`} onClick={closeMobile} className="mobile-phone">
+                <PhoneIcon />
+                {PHONE_DISPLAY}
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  closeMobile();
+                  window.dispatchEvent(new CustomEvent("open-quote-flow"));
+                }}
+                className="btn btn-primary mobile-cta"
+              >
+                Request a Proposal
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden>
+                  <path d="M9 1L13 5L9 9M13 5H1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Services mega menu — same chrome as the Service Area mega menu,
             just a flat 3-card grid since there's no two-step flow needed. */}
@@ -848,9 +1057,231 @@ export function Nav() {
           :global(.util-phone:hover .util-phone-label) {
             color: var(--color-accent);
           }
+
+          /* ── Utility bar responsive text swap ──────────────────── */
+          .util-area-short { display: none; }
           @media (max-width: 900px) {
             .nav-links {
               display: none !important;
+            }
+          }
+          /* Main nav row (logo · hamburger · CTA) — the CTA button's fixed
+             "Request a Proposal" text is the widest element here, so it's
+             what needs to shrink for the row to fit next to the logo and
+             hamburger on a narrow phone without wrapping/cramming. */
+          @media (max-width: 480px) {
+            .main-nav-row {
+              gap: var(--space-3) !important;
+            }
+            .nav-logo-img {
+              height: 38px !important;
+            }
+            :global(.nav-cta) {
+              padding: var(--space-2) var(--space-3) !important;
+              font-size: var(--text-sm) !important;
+              gap: var(--space-1) !important;
+            }
+          }
+          @media (max-width: 640px) {
+            .util-bar-inner {
+              padding-block: var(--space-1) !important;
+              gap: var(--space-2) !important;
+            }
+            .util-area {
+              font-size: 0.625rem;
+            }
+            .util-area-full { display: none; }
+            .util-area-short { display: inline; }
+            :global(.util-phone) {
+              min-width: 0 !important;
+              padding: 0 !important;
+            }
+            :global(.util-phone-label) {
+              display: none;
+            }
+            :global(.util-phone-number) {
+              font-size: 0.6875rem;
+            }
+          }
+
+          /* ── Hamburger button ──────────────────────────────────── */
+          .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid var(--color-rule-on-dark);
+            border-radius: var(--radius-xs);
+            cursor: pointer;
+            justify-self: center;
+          }
+          .mobile-menu-btn span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: var(--color-ink-on-dark);
+          }
+          @media (max-width: 900px) {
+            .mobile-menu-btn {
+              display: flex;
+            }
+          }
+
+          /* ── Mobile drawer ──────────────────────────────────────── */
+          .mobile-drawer {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: var(--color-paper-dark);
+            display: flex;
+            flex-direction: column;
+            animation: mobile-drawer-in 0.2s var(--ease-out);
+          }
+          @keyframes mobile-drawer-in {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .mobile-drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4) var(--container-px);
+            border-bottom: 1px solid var(--color-rule-on-dark);
+            flex-shrink: 0;
+          }
+          .mobile-close-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid var(--color-rule-on-dark);
+            border-radius: var(--radius-xs);
+            color: var(--color-ink-on-dark);
+            cursor: pointer;
+          }
+          .mobile-drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-6) var(--container-px);
+          }
+          .mobile-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+          }
+          .mobile-links > li {
+            border-bottom: 1px solid var(--color-rule-on-dark);
+          }
+          .mobile-links :global(a) {
+            display: block;
+            padding: var(--space-5) 0;
+            color: var(--color-ink-on-dark);
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: var(--text-lg);
+            font-weight: 600;
+          }
+          .mobile-accordion-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: var(--space-5) 0;
+            background: transparent;
+            border: none;
+            color: var(--color-ink-on-dark);
+            font-family: var(--font-display);
+            font-size: var(--text-lg);
+            font-weight: 600;
+            cursor: pointer;
+          }
+          .mobile-accordion-panel {
+            list-style: none;
+            margin: 0 0 var(--space-4);
+            padding: 0 0 0 var(--space-4);
+            display: grid;
+            gap: var(--space-1);
+            border-left: 2px solid var(--color-rule-on-dark);
+          }
+          .mobile-accordion-panel :global(a) {
+            padding: var(--space-3) 0 var(--space-3) var(--space-4);
+            font-size: var(--text-base);
+            font-weight: 500;
+            color: var(--color-ink-on-dark-soft);
+          }
+          .mobile-region-list { border-left: none; padding-left: 0; }
+          .mobile-region-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: var(--space-3) 0 var(--space-3) var(--space-4);
+            background: transparent;
+            border: none;
+            border-left: 2px solid var(--color-rule-on-dark);
+            color: var(--color-ink-on-dark-soft);
+            font-family: var(--font-body);
+            font-size: var(--text-base);
+            font-weight: 500;
+            cursor: pointer;
+          }
+          .mobile-region-count {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            color: var(--color-ink-on-dark-soft);
+          }
+          .mobile-city-list {
+            list-style: none;
+            margin: 0 0 var(--space-2);
+            padding: 0 0 0 var(--space-8);
+            display: grid;
+            gap: 2px;
+            border-left: 2px solid var(--color-rule-on-dark);
+          }
+          .mobile-city-list :global(a) {
+            padding: var(--space-2) 0 var(--space-2) var(--space-4);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--color-ink-on-dark-soft);
+          }
+          .mobile-drawer-footer {
+            flex-shrink: 0;
+            display: grid;
+            gap: var(--space-3);
+            padding: var(--space-5) var(--container-px);
+            border-top: 1px solid var(--color-rule-on-dark);
+          }
+          .mobile-phone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3);
+            border: 1px solid var(--color-rule-on-dark);
+            border-radius: var(--radius-xs);
+            color: var(--color-ink-on-dark);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            font-weight: 600;
+          }
+          .mobile-phone :global(svg) {
+            color: var(--color-accent);
+          }
+          .mobile-cta {
+            width: 100%;
+            justify-content: center;
+          }
+          @media (min-width: 901px) {
+            .mobile-drawer {
+              display: none;
             }
           }
         `}</style>
