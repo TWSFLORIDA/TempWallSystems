@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { LeadForm } from "./LeadForm";
 import { HeroArchSVG } from "./HeroArchSVG";
+import { HeroPeekCTA } from "./HeroPeekCTA";
 import type { CityPageData } from "@/lib/locationContent";
 
 export interface ServiceHeroOverride {
@@ -196,9 +197,30 @@ export function Hero({
           )}
         </div>
 
-        {/* Right — frosted-glass lead form (glass blur picks up the photo) */}
+        {/* Right — frosted-glass lead form (glass blur picks up the photo).
+            Desktop only — see .hero-peek-card below for the mobile
+            equivalent. */}
         <div id="quote" className="hero-form-wrap">
           <LeadForm variant="hero" />
+        </div>
+
+        {/* Mobile-only compact CTA — the full 6-field form pushed below the
+            fold once the grid stacks to one column on phones, which hurt
+            conversion (the primary lead-capture surface was going
+            unseen). This compact card takes a fraction of the height, so
+            headline + trust chips + this still fit above the fold. Tapping
+            it opens the existing full-screen QuoteFlowModal (same
+            "open-quote-flow" event the nav CTA already fires) instead of
+            cramming the full form inline. Desktop hides this entirely. */}
+        <div className="hero-peek-card">
+          <p className="label-mono-accent" style={{ marginBottom: "var(--space-2)" }}>
+            Request a quote
+          </p>
+          <h3 className="hero-peek-title">Get a clear proposal.</h3>
+          <p className="hero-peek-sub">
+            60-second form — we&apos;ll call or text back today.
+          </p>
+          <HeroPeekCTA />
         </div>
       </div>
 
@@ -300,6 +322,44 @@ export function Hero({
             padding-block: var(--space-16) !important;
           }
           .hero-arch { display: none; }
+        }
+
+        /* Mobile compact CTA card — hidden on desktop (full form shows
+           instead); swaps in at the same 900px breakpoint the hero grid
+           already collapses at. */
+        .hero-peek-card {
+          display: none;
+        }
+        @media (max-width: 900px) {
+          .hero-form-wrap { display: none; }
+          .hero-peek-card {
+            display: block;
+            background: var(--color-glass);
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+            border: 1px solid var(--color-glass-border);
+            box-shadow: var(--shadow-glass);
+            border-radius: var(--radius-sm);
+            padding: var(--space-6);
+          }
+        }
+        .hero-peek-title {
+          font-family: var(--font-display);
+          font-size: var(--text-xl);
+          font-weight: 700;
+          color: var(--color-ink-on-dark);
+          margin: 0 0 var(--space-2);
+          letter-spacing: -0.01em;
+        }
+        .hero-peek-sub {
+          font-size: var(--text-sm);
+          line-height: 1.5;
+          color: var(--color-ink-on-dark-soft);
+          margin: 0 0 var(--space-5);
+        }
+        :global(.hero-peek-btn) {
+          width: 100%;
+          font-family: var(--font-body);
         }
       `}</style>
     </section>

@@ -22,6 +22,19 @@ function PhoneIcon() {
   );
 }
 
+function TextIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M1.5 3.5A1.5 1.5 0 0 1 3 2h10a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5H6.2L3 13.8V11H3a1.5 1.5 0 0 1-1.5-1.5v-6z"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [areaOpen, setAreaOpen] = useState(false);
@@ -165,18 +178,26 @@ export function Nav() {
             className="util-area"
             style={{ justifySelf: "start", textTransform: "uppercase" }}
           >
-            <span className="util-area-full">Southeast Florida · Treasure Coast → Miami</span>
-            <span className="util-area-short">Southeast Florida</span>
+            Southeast Florida · Treasure Coast → Miami
           </span>
           <span />
-          <a
-            href={`tel:${PHONE_TEL}`}
-            className="util-phone"
-            aria-label="Call or text us"
-          >
-            <span className="util-phone-label">Call or Text</span>
-            <strong className="util-phone-number">{PHONE_DISPLAY}</strong>
-          </a>
+          <div className="util-actions">
+            <a
+              href={`sms:${PHONE_TEL}`}
+              className="util-text-btn"
+              aria-label="Text us"
+            >
+              <TextIcon />
+            </a>
+            <a
+              href={`tel:${PHONE_TEL}`}
+              className="util-phone"
+              aria-label="Call or text us"
+            >
+              <span className="util-phone-label">Call or Text</span>
+              <strong className="util-phone-number">{PHONE_DISPLAY}</strong>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -291,45 +312,44 @@ export function Nav() {
             </li>
           </ul>
 
-          <button
-            type="button"
-            onClick={() => setMobileOpen(true)}
-            aria-expanded={mobileOpen}
-            aria-label="Open menu"
-            className="mobile-menu-btn"
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-
-          <button
-            type="button"
-            onClick={() =>
-              window.dispatchEvent(new CustomEvent("open-quote-flow"))
-            }
-            className="btn btn-primary nav-cta"
-            style={{
-              fontFamily: "var(--font-body)",
-              justifySelf: "end",
-            }}
-          >
-            Request a Proposal
-            <svg
-              width="14"
-              height="10"
-              viewBox="0 0 14 10"
-              fill="none"
-              aria-hidden
+          <div className="nav-right-group" style={{ justifySelf: "end" }}>
+            <button
+              type="button"
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("open-quote-flow"))
+              }
+              className="btn btn-primary nav-cta"
+              style={{ fontFamily: "var(--font-body)" }}
             >
-              <path
-                d="M9 1L13 5L9 9M13 5H1"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="square"
-              />
-            </svg>
-          </button>
+              Request a Proposal
+              <svg
+                width="14"
+                height="10"
+                viewBox="0 0 14 10"
+                fill="none"
+                aria-hidden
+              >
+                <path
+                  d="M9 1L13 5L9 9M13 5H1"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="square"
+                />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMobileOpen(true)}
+              aria-expanded={mobileOpen}
+              aria-label="Open menu"
+              className="mobile-menu-btn"
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+          </div>
         </nav>
 
         {/* Mobile drawer — full-screen panel, own accordion-style Services
@@ -343,7 +363,7 @@ export function Nav() {
             <div className="mobile-drawer-header">
               <a href="#top" onClick={closeMobile} aria-label="TWS Southeast Florida — home">
                 <Image
-                  src="/tws-logo-white.webp"
+                  src="/tws-logo.webp"
                   alt="TWS — Temporary Wall Systems"
                   width={200}
                   height={95}
@@ -1023,20 +1043,25 @@ export function Nav() {
             .area-region-grid,
             .area-city-grid { grid-template-columns: 1fr !important; }
           }
-          /* Phone link sits in the same grid column as the CTA below,
-             with horizontal padding matching the CTA so widths align. */
-          :global(.util-phone) {
+          /* Actions group (text + phone) sits in the same grid column,
+             right-aligned, with horizontal padding matching the CTA below
+             so widths align. */
+          .util-actions {
             justify-self: end;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: 0 var(--space-5);
+          }
+          :global(.util-phone) {
             display: inline-flex;
             align-items: baseline;
             gap: var(--space-3);
-            padding: 0 var(--space-5);
             color: var(--color-ink-on-dark);
             text-decoration: none;
             font-family: var(--font-mono);
             text-transform: none;
             transition: color var(--dur-fast) var(--ease-out);
-            min-width: 200px;
             justify-content: flex-end;
           }
           :global(.util-phone-label) {
@@ -1057,9 +1082,27 @@ export function Nav() {
           :global(.util-phone:hover .util-phone-label) {
             color: var(--color-accent);
           }
+          /* Tap-to-text — mobile only; desktop already reads "Call or
+             Text" on the one tel: link, and there's no room to spare. */
+          :global(.util-text-btn) {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+            border: 1px solid var(--color-rule-on-dark);
+            border-radius: var(--radius-xs);
+            color: var(--color-ink-on-dark);
+            transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+          }
+          :global(.util-text-btn:hover) {
+            color: var(--color-accent);
+            border-color: var(--color-accent);
+          }
 
-          /* ── Utility bar responsive text swap ──────────────────── */
-          .util-area-short { display: none; }
+          /* ── Utility bar responsive text ───────────────────────── */
           @media (max-width: 900px) {
             .nav-links {
               display: none !important;
@@ -1077,7 +1120,7 @@ export function Nav() {
               height: 38px !important;
             }
             :global(.nav-cta) {
-              padding: var(--space-2) var(--space-3) !important;
+              padding: var(--space-4) var(--space-3) !important;
               font-size: var(--text-sm) !important;
               gap: var(--space-1) !important;
             }
@@ -1088,13 +1131,19 @@ export function Nav() {
               gap: var(--space-2) !important;
             }
             .util-area {
+              display: block;
+              max-width: 100%;
               font-size: 0.625rem;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
             }
-            .util-area-full { display: none; }
-            .util-area-short { display: inline; }
-            :global(.util-phone) {
-              min-width: 0 !important;
+            .util-actions {
               padding: 0 !important;
+              gap: var(--space-2) !important;
+            }
+            :global(.util-text-btn) {
+              display: flex;
             }
             :global(.util-phone-label) {
               display: none;
@@ -1102,6 +1151,13 @@ export function Nav() {
             :global(.util-phone-number) {
               font-size: 0.6875rem;
             }
+          }
+
+          /* ── Right-side group: CTA + hamburger, right-aligned ──── */
+          .nav-right-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
           }
 
           /* ── Hamburger button ──────────────────────────────────── */
@@ -1113,11 +1169,11 @@ export function Nav() {
             gap: 5px;
             width: 40px;
             height: 40px;
+            flex-shrink: 0;
             background: transparent;
             border: 1px solid var(--color-rule-on-dark);
             border-radius: var(--radius-xs);
             cursor: pointer;
-            justify-self: center;
           }
           .mobile-menu-btn span {
             display: block;
@@ -1130,13 +1186,18 @@ export function Nav() {
               display: flex;
             }
           }
+          @media (max-width: 480px) {
+            .nav-right-group {
+              gap: var(--space-2) !important;
+            }
+          }
 
           /* ── Mobile drawer ──────────────────────────────────────── */
           .mobile-drawer {
             position: fixed;
             inset: 0;
             z-index: 100;
-            background: var(--color-paper-dark);
+            background: var(--color-paper-0);
             display: flex;
             flex-direction: column;
             animation: mobile-drawer-in 0.2s var(--ease-out);
@@ -1150,7 +1211,7 @@ export function Nav() {
             align-items: center;
             justify-content: space-between;
             padding: var(--space-4) var(--container-px);
-            border-bottom: 1px solid var(--color-rule-on-dark);
+            border-bottom: 1px solid var(--color-rule);
             flex-shrink: 0;
           }
           .mobile-close-btn {
@@ -1160,9 +1221,9 @@ export function Nav() {
             width: 40px;
             height: 40px;
             background: transparent;
-            border: 1px solid var(--color-rule-on-dark);
+            border: 1px solid var(--color-rule-strong);
             border-radius: var(--radius-xs);
-            color: var(--color-ink-on-dark);
+            color: var(--color-ink-0);
             cursor: pointer;
           }
           .mobile-drawer-body {
@@ -1177,12 +1238,12 @@ export function Nav() {
             display: grid;
           }
           .mobile-links > li {
-            border-bottom: 1px solid var(--color-rule-on-dark);
+            border-bottom: 1px solid var(--color-rule);
           }
           .mobile-links :global(a) {
             display: block;
             padding: var(--space-5) 0;
-            color: var(--color-ink-on-dark);
+            color: var(--color-ink-0);
             text-decoration: none;
             font-family: var(--font-display);
             font-size: var(--text-lg);
@@ -1196,7 +1257,7 @@ export function Nav() {
             padding: var(--space-5) 0;
             background: transparent;
             border: none;
-            color: var(--color-ink-on-dark);
+            color: var(--color-ink-0);
             font-family: var(--font-display);
             font-size: var(--text-lg);
             font-weight: 600;
@@ -1208,13 +1269,13 @@ export function Nav() {
             padding: 0 0 0 var(--space-4);
             display: grid;
             gap: var(--space-1);
-            border-left: 2px solid var(--color-rule-on-dark);
+            border-left: 2px solid var(--color-rule);
           }
           .mobile-accordion-panel :global(a) {
             padding: var(--space-3) 0 var(--space-3) var(--space-4);
             font-size: var(--text-base);
             font-weight: 500;
-            color: var(--color-ink-on-dark-soft);
+            color: var(--color-ink-3);
           }
           .mobile-region-list { border-left: none; padding-left: 0; }
           .mobile-region-trigger {
@@ -1225,8 +1286,8 @@ export function Nav() {
             padding: var(--space-3) 0 var(--space-3) var(--space-4);
             background: transparent;
             border: none;
-            border-left: 2px solid var(--color-rule-on-dark);
-            color: var(--color-ink-on-dark-soft);
+            border-left: 2px solid var(--color-rule);
+            color: var(--color-ink-3);
             font-family: var(--font-body);
             font-size: var(--text-base);
             font-weight: 500;
@@ -1235,7 +1296,7 @@ export function Nav() {
           .mobile-region-count {
             font-family: var(--font-mono);
             font-size: 0.6875rem;
-            color: var(--color-ink-on-dark-soft);
+            color: var(--color-ink-3);
           }
           .mobile-city-list {
             list-style: none;
@@ -1243,20 +1304,20 @@ export function Nav() {
             padding: 0 0 0 var(--space-8);
             display: grid;
             gap: 2px;
-            border-left: 2px solid var(--color-rule-on-dark);
+            border-left: 2px solid var(--color-rule);
           }
           .mobile-city-list :global(a) {
             padding: var(--space-2) 0 var(--space-2) var(--space-4);
             font-size: var(--text-sm);
             font-weight: 500;
-            color: var(--color-ink-on-dark-soft);
+            color: var(--color-ink-3);
           }
           .mobile-drawer-footer {
             flex-shrink: 0;
             display: grid;
             gap: var(--space-3);
             padding: var(--space-5) var(--container-px);
-            border-top: 1px solid var(--color-rule-on-dark);
+            border-top: 1px solid var(--color-rule);
           }
           .mobile-phone {
             display: flex;
@@ -1264,9 +1325,9 @@ export function Nav() {
             justify-content: center;
             gap: var(--space-2);
             padding: var(--space-3);
-            border: 1px solid var(--color-rule-on-dark);
+            border: 1px solid var(--color-rule-strong);
             border-radius: var(--radius-xs);
-            color: var(--color-ink-on-dark);
+            color: var(--color-ink-0);
             text-decoration: none;
             font-family: var(--font-mono);
             font-size: var(--text-sm);
